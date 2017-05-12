@@ -38,7 +38,7 @@
 
 		ant -f ./viskit/viskit.xml help 
 
-	Viskit is powered by Apache projects Ant, Ivy and Xalan.
+	Viskit is powered by Apache projects Ant and Ivy, and by Ant Contrib and Ant Xpath..
 	Author: Miguelangel Fernandez - miguelangel.fernandez@kony.com
 		</echo>
 	</target>
@@ -74,7 +74,7 @@
 
 			ant -f ./viskit/viskit.xml -p
 
-	Note: Viskit works well for projects created with Vis 7.1 and above. Project from Vis 7.0 have a broken konyplugins.xml file.
+	Note: Viskit works well for projects created with Vis 7.1 and above. Projects built with Vis 7.0 have a broken konyplugins.xml file.
 
 		</echo>
 	</target>
