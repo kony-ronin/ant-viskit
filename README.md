@@ -55,6 +55,12 @@ As always with Ant, to see the full list of options, from your Vis workspace run
 
 I'm really sorry about this, but the way this works is that **you have to execute Viskit from your Vis workspace**. You'll get odd behaviour if you don't. I'm working on it. 
 
+**Important:** Viskit works well for projects created with Vis 7.1 and above. Projects built with Vis 7.0 have a broken konyplugins.xml file.
+
+## To Do
+
+If your original installation is lower than 7.2.1 and you want switch to a version greater than 7.2.1 or viceversa, you'll also have to switch Java and Gradle versions. Viskit will warn you about it, but it can't switch these for you... yet. I'm working on it.
+
 ## Credits
 
 Viskit is powered by Apache projects [Ant](http://ant.apache.org/) and [Ivy](http://ant.apache.org/ivy/), and by [Ant Contrib](http://ant-contrib.sourceforge.net/) and [Ant Xpath](https://code.google.com/archive/p/ant-xpath-task/wikis/Introduction.wiki).
