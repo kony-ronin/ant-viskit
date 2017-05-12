@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Viskit Installer" basedir="." default="home" xmlns:ivy="antlib:org.apache.ivy.ant">
+	
+	<target name="home">
+		<echo>
+	Welcome to the Viskit set-up.
+
+	All this does is download a few libraries into your Viskit directory.
+	Fear not lengthy installations. It'll just take a sec.
+
+	To proceed, from your Visualiser workspace run:
+
+		./viskit/viskit-setup.xml install
+
+		</echo>
+	</target>
+
+	<target name="clean">
+		<echo message="Removing prior setup if it exists.${line.separator}"/>
+		<delete dir="./lib"/>
+		<mkdir dir="./downloads"/>
+		<mkdir dir="./lib"/>
+	</target>
+
+	<!--Download Apache Ivy-->
+	<target name="ivy">
+		<echo message="Installing Apache Ivy.${line.separator}"/>
+
+		<mkdir dir="./downloads"/>
+		<mkdir dir="./lib"/>
+
+		<get verbose="true"
+			 dest="./downloads/ivy.zip"
+			 src="http://ftp.cixug.es/apache//ant/ivy/2.4.0/apache-ivy-2.4.0-bin.zip"
+		/>
+		<unzip src="./downloads/ivy.zip" dest="./lib">
+			<patternset>
+				<include name="*/ivy*.jar"/>
+			</patternset>
+		</unzip>
+	</target>
+		
+	<!--Download Xpath-->
+	<target name="xpath">
+		<echo message="Installing XPath Task.${line.separator}"/>
+		<get verbose="true"
+			 dest="./downloads/xpathtask.zip"
+			 src="https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/ant-xpath-task/xpathtask-0.1.zip"
+		/>
+		<unzip src="./downloads/xpathtask.zip" dest="./lib/xpathtask">
+			<patternset>
+				<include name="**/*.jar"/>
+			</patternset>
+		</unzip>
+	</target>
+	
+	<!--Download Ant Contrib-->
+	<target name="antcontrib">
+		<echo message="Installing Ant Contrib.${line.separator}"/>
+		<get verbose="true"
+			 dest="./lib/ant-contrib.jar"
+			 src="http://central.maven.org/maven2/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar"
+		/>
+	</target>
+
+	<target name="wrapup">
+		<delete dir="./downloads"/>
+	</target>
+
+	<target name="install" depends="clean,ivy,xpath,antcontrib,wrapup">
+		<echo message="Viskit is now installed."/>
+	</target>
+
+</project>

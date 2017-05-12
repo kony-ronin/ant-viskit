@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Viskit" basedir="." default="home" xmlns:ivy="antlib:org.apache.ivy.ant">
+	
+	<!--Inject environment variables into Ant-->
+	<property environment="env"/>
+
+	<!--Define the Ivy tasks from the jar in this Viskit directory-->
+	<taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant">
+		<classpath>
+			<pathelement location="./lib/apache-ivy-2.4.0/ivy-2.4.0.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!--Define the Ant Contrib tasks from the jar in this Viskit directory-->
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="./ant-contrib-0.6.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!--Define the xpath task to query XML documents-->
+	<taskdef name="xpath" classname="uk.co.cocking.anttasks.XPathTask">
+		<classpath>
+			<fileset dir="./lib/xpathtask">
+				<include name="*.jar" /> </fileset>
+			<fileset dir="./lib/xpathtask/lib">
+				<include name="*.jar" /> </fileset>
+		</classpath>
+	</taskdef>
+
+	<!--This is where the real fun begins!-->
+	<target name="home">
+		<echo>
+	Welcome to Viskit 1.0
+	Viskit is a toolkit for Kony Visualiser.
+
+	For help on how to use Viskit, from your Visualiser workspace run:
+
+		ant -f ./viskit/viskit.xml help 
+
+	Viskit is powered by Apache projects Ant, Ivy and Xalan.
+	Author: Miguelangel Fernandez - miguelangel.fernandez@kony.com
+		</echo>
+	</target>
+
+	<target name="help">
+		<echo>
+	Viskit is super-simple to use.
+
+	Setup:
+
+		1. Set the VIS_HOME environment variable to the dir of your current Visualiser installation. 
+		2. Configure Ant. If you've installed Vis you already have Ant installed within it. Just set the ANT_HOME environment variable to point to it.
+		3. Place the Viskit bundle in your Vis workspace.
+		4. Open a command line and cd into your workspace.
+		5. From your Visualiser workspace, run the Viskit set-up.
+
+			ant -f ./viskit/viskit-setup.xml install
+
+	Transform your Vis version to match a project:
+
+		The main thing Viskit was made for is to allow you to use a single Vis installation for any project regardless of it's version. So you're no longer forced to upgrade your projects or keep multiple Vis installations.
+		To do this, run the Viskit 'setvisver' command and give it the name of the Visualiser project you wish to adapt your Vis installation to. From your Vis workspace run:
+
+			ant -f ./viskit/viskit.xml setvisver -Dproject=Foo
+
+	Take a snapshot of the plugins you're currently using:
+
+		Create a frozen copy of the collection of plugins your current project requires.
+
+	See all options:
+
+		As always with Ant, to see the full list of options, from your Vis workspace run:
+
+			ant -f ./viskit/viskit.xml -p
+
+	Note: Viskit works well for projects created with Vis 7.1 and above. Project from Vis 7.0 have a broken konyplugins.xml file.
+	
+		</echo>
+	</target>
+
+	<target name="install" description="-> Install Viskit in this Vis workspace.">
+		<echo message="Installing Viskit.${line.separator}"/>
+		<echo message="To-do"/>
+		<!--get src="http://foo.bar/qux.jar" dest="./viskit/downloads"/-->
+
+		<mkdir dir="./downloads"/>
+		<mkdir dir="./lib"/>
+
+		<get verbose="true"
+			 dest="./downloads/ivy.zip"
+			 src="http://ftp.cixug.es/apache//ant/ivy/2.4.0/apache-ivy-2.4.0-bin.zip"
+		/>
+		<unzip src="./downloads/ivy.zip" dest="./lib">
+			<patternset>
+				<include name="*/ivy*.jar"/>
+			</patternset>
+		</unzip>
+
+		<get verbose="true"
+			 dest="./downloads/xpathtask.zip"
+			 src="https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/ant-xpath-task/xpathtask-0.1.zip"
+		/>
+		<unzip src="./downloads/xpathtask.zip" dest="./lib">
+			<patternset>
+				<include name="*/*.jar"/>
+			</patternset>
+		</unzip>
+
+		<delete dir="./downloads"/>
+		
+		<!--get src="https://freefr.dl.sourceforge.net/project/ant-contrib/ant-contrib/ant-contrib-0.6/ant-contrib-0.6-bin.zip" dest="./viskit/downloads"/>
+
+		
+		
+		<From Maven repos-->
+		<!--get src="http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact](-[revision]).[ext]" dest="./viskit"/-->
+	</target>
+
+	<target name="bootstrap">
+		
+		<!--Check that a path to a Vis installation has been provided-->
+		<if>
+			<not><isset property="vis.home"/></not>
+			<then>
+				<echo message="No vis.home input parameter.${line.separator}Defaultig to $VIS_HOME env var." />
+				
+				<if>
+					<isset property="env.VIS_HOME"/>
+					<then>
+						<property name="vis.home" value="${env.VIS_HOME}"/>
+					</then>
+					<else>
+						<echo message="ERROR: You must either set the $VIS_HOME env var or use the -Dvis.home option." />
+						<fail message="No Vis installation specified!!!"/>
+					</else>
+				</if>
+				
+			</then>
+		</if>
+		<echo message="Vis home set to '${vis.home}'"/>
+		
+		<!--Initialise the warning list-->
+		<var name="warning.list" value="" />
+	</target>
+
+	<target name="checkwspc" description="-> Check whether this looks like a Vis workspace.">
+		<echo message="Checking that this is a Visualiser workspace.${line.separator}"/>
+		<echo message="To-do"/>
+	</target>
+
+	<!--Check that there is a project in this workspace by the name provided with the -Dproject=Foo parameter-->
+	<target name="checkproj" description="-> Check whether a specific Vis project exists in this workspace.">
+		
+		<fail unless="project" message="You must specify a Vis project. Use the -Dproject option."/>
+
+		<echo message="Checking that project ${project} exists in this workspace.${line.separator}"/>		
+		<if>
+			<available file="../${project}"/>
+			<then>
+				<echo message="Project '${project}' found."/>
+			</then>
+			<else>
+				<echo message="ERROR: Project '${project}' NOT found!!"/>
+				<fail message="There's no Vis project by that name in this workspace"/>
+			</else>
+		</if>
+	</target>
+
+	<!--Adjust to use the Vis plugins that match this operating system-->
+	<target name="osplugins" depends="checkproj" description="-> Tweak konyplugins.xml file for OS-dependendant plugins.">
+		<echo message="Adapting plugin dependencies to your OS.${line.separator}"/>
+		<if>
+			<!--available file="../${project}/ivy.xml"/-->
+			<available file="../${project}/konyplugins.xml"/>
+			<then>
+				<echo message="${project}/konyplugins.xml found."/>
+
+				<if>
+					<or>
+						<os family="mac"/>
+						<os family="unix"/>
+					</or>
+					<then>
+						<echo message="Adjusting Vis plugins for Mac/Linux"/>
+						<replace file="../${project}/konyplugins.xml" token="win64" value="mac64" summary="true"/>
+					</then>
+					<elseif>
+						<os family="windows"/>
+						<then>
+							<echo message="Adjusting Vis plugins for Windows"/>
+							<replace file="../${project}/konyplugins.xml" token="mac64" value="win64" summary="true"/>
+						</then>
+					</elseif>
+				</if>
+
+			</then>
+			<else>
+				<echo message="${project}/konyplugins.xml NOT found!!"/>
+			</else>
+		</if>
+				
+	</target>
+
+	<!--Generate Ivy dependency file from konyplugins.xml file in Vis project home-->
+	<target name="genivy" description="-> Generate an Ivy dependency file for a Vis project.">
+		<echo message="Generating Ivy dependency file from ./${project}/konyplugins.xml"/>
+		<xslt in="../${project}/konyplugins.xml" out="../${project}/ivy.xml" style="./kony-to-ivy.xsl"/>
+	</target>
+
+	<!--Determine which Vis version a project requires according to the version of the keditor plugin-->
+	<target name="visver" depends="checkwspc,checkproj,genivy" description="-> Determine which Vis version a project requires.">
+		<echo message="Reading the version of Vis required for project '${project}'.${line.separator}"/>
+		<echo message="According to file ./${project}/ivy.xml...${line.separator}"/>
+		<xpath document="./${project}/ivy.xml" xpath="/ivy-module/dependencies/dependency[@name='com.pat.tool.keditor']/@rev" outputproperty="keditor.version"/>
+		
+		<propertyregex property="vis.version"
+			 input="${keditor.version}"
+			 regexp="(\d+\.\d+\.\d+)\w*"
+			 select="\1"
+			 casesensitive="false"
+			 defaultValue=""/>
+
+		<echo message="Project '${project}' requires keditor version '${keditor.version}', which means Vis version '${vis.version}'" />
+	</target>
+
+	<!--Clean the dropins directory-->
+	<target name="clean" description="-> Clean $VIS_HOME/dropins directory.">
+		<echo message="Resetting the dropins dir.${line.separator}"/>
+		<delete dir="${vis.home}/Kony_Visualizer_Enterprise/dropins"/>
+	</target>
+
+	<!--Use Ivy to download the plugin dependencies for this Vis project and place them in the VIS_HOME/dropins directory-->
+	<target name="resolve" depends="bootstrap,checkproj,clean" description="-> Retrieve Visualiser plugins.">
+		<echo message="Getting the right plugin versions for your project.${line.separator}"/>
+		<ivy:configure file="./ivysettings.xml" />
+		<ivy:resolve file="../${project}/ivy.xml" conf="default" />
+		<ivy:retrieve pattern="${vis.home}/Kony_Visualizer_Enterprise/dropins/[artifact]_[revision].[ext]"/>
+	</target>
+
+	<!--Detete from the plugins dir any file that is already present in the dropins dir-->
+	<target name="dedup" depends="bootstrap" description="-> Remove other versions of dropin plugins in $VIS_HOME/plugins directory.">
+		<echo message="Deleting existing plugins of other versions from plugins dir:${line.separator}"/>
+
+		<!--Before we start deleting the original installation plugins, let's make sure there's a snapshot of them-->
+		<if>
+			<not>
+				<available file="${vis.home}/Kony_Visualizer_Enterprise/snapshots/default" type="dir" property="default.snapshot.exists"/>
+			</not>
+			<then>
+				<echo message="No default snapshot exists. Let's create one."/>
+				<antcall target="snapshot" inheritall="false">
+					<param name="vis.home" value="${vis.home}"/>
+				</antcall>
+			</then>
+		</if>
+
+		<!--Create a list of the plugins in the dropins dir-->
+		<fileset id="plugins" dir="${vis.home}/Kony_Visualizer_Enterprise/dropins" includes="*"/>
+		<property name="plugins.list" refid="plugins"/>
+
+		<echo message="List of plugins already in ${vis.home}/Kony_Visualizer_Enterprise/dropins dir:${line.separator}" />
+
+		<!--Compose a space separated list of the file patterns for all the plugins to delete from plugins dir-->
+		<var name="plugin.patterns" value="" />
+		<for list="${plugins.list}" delimiter=";" param="plugin" >
+			<sequential>
+				<propertyregex property="plugin.name"
+				 input="@{plugin}"
+				 regexp="([[a-z0-9]+\.]+[a-z0-9])_.+"
+				 select="\1"
+				 casesensitive="false"
+				 override="true"
+				 defaultValue=""/>
+
+				<var name="pattern" value="${plugin.name}_*"/>
+				<echo message="    ${pattern}"/>
+				<var name="plugin.patterns" value="${plugin.patterns} ${pattern}" />
+			</sequential>
+		</for>
+		<delete verbose="true">
+			<fileset dir="${vis.home}/Kony_Visualizer_Enterprise/plugins" includes="${plugin.patterns}"/>
+		</delete>
+	</target>
+
+	<!--Use the appropriate Java Development Kit version depending on the version of Visualiser-->
+	<target name="jdkcheck" depends="visver" description="-> Swith to the version of the JDK needed for a specific Vis project">
+		<echo message="Checking for the right version of the Java Development Kit.${line.separator}"/>
+		<echo message="JAVA_HOME is set to '${env.JAVA_HOME}'"/>
+		
+		<propertyregex property="jdk.version"
+		 input="${java.version}"
+		 regexp="(\d+\.\d+\.\d+)\w*"
+		 select="\1"
+		 casesensitive="false"
+		 override="true"
+		 defaultValue=""
+		/>
+		<echo message="Your JDK version is '${jdk.version}'"/>
+
+		<if>
+			<bool><islessthan arg1="${vis.version}" arg2="7.2.1"/></bool>
+			<then>
+				<property name="jdk.required" value="1.7.0"/>
+			</then>
+			<else>
+				<property name="jdk.required" value="1.8.0"/>
+			</else>
+		</if>
+		<echo message="Project '${project}' requires Vis version '${vis.version}', which requires Java JDK ${jdk.required}" />
+		
+		<if>
+			<equals arg1="${jdk.version}" arg2="${jdk.required}"/>
+			<then>
+				<echo message="Your JDK version is OK"/>
+			</then>
+			<else>
+				<var name="w" value="WARNING: Your JDK version doesn't match the one required by project ${project}"/>
+				<var name="warning.list" value="${warning.list}${line.separator}${w}"/>
+				<echo message="${w}"/>
+			</else>
+		</if>		
+	</target>
+
+	<!--Use the appropriate Gradle version depending on the version of Visualiser-->
+	<target name="gradlecheck" depends="bootstrap,visver,jdkcheck" description="-> Swith to the version of Gradle needed for a specific Vis project">
+		<echo message="Switching to the right version of Gradle."/>
+		<if>
+			<bool><islessthan arg1="${vis.version}" arg2="7.2.1"/></bool>
+			<then>
+				<property name="gradle.required" value="2.13"/>
+			</then>
+			<else>
+				<property name="gradle.required" value="2.14.1"/>
+			</else>
+		</if>
+		<echo message="Project '${project}' requires Vis version '${vis.version}', which requires Gradle ${gradle.required}" />
+
+		<exec executable="${vis.home}/gradle/bin/gradle" outputproperty="gradle.version.long">
+			<arg line="-version"/>
+		</exec>
+		<echo message="${gradle.version.long}"/>
+
+		<propertyregex property="gradle.version"
+		 input="${gradle.version.long}"
+		 regexp="Gradle (\d+[\.\d]*)\w*"
+		 select="\1"
+		 casesensitive="false"
+		 override="true"
+		 defaultValue=""
+		/>
+		<echo message="Your Visualiser's Gradle version is '${gradle.version}'"/>
+
+		<if>
+			<equals arg1="${gradle.version}" arg2="${gradle.required}"/>
+			<then>
+				<echo message="Your Gradle version is OK"/>
+			</then>
+			<else>
+				<var name="w" value="WARNING: Your Gradle version doesn't match the one required by project ${project}"/>
+				<var name="warning.list" value="${warning.list}${line.separator}${w}"/>
+				<echo message="${w}"/>
+			</else>
+		</if>
+
+	</target>
+
+	<!--Create a snapshot of the plugins that came with this Vis version needed for a specific project-->
+	<target name="snapshot" depends="bootstrap" description="-> Create a snapshot of the currently used plugins collection">
+		<if>
+			<!--Check whether the user has provided a name for the snapshot-->
+			<isset property="shot"/>
+			<then>
+				<echo message="Creating snapshot '${shot}' of the plugins in dir '${vis.home}/Kony_Visualizer_Enterprise/dropins'.${line.separator}"/>
+				<property name="pluginsdoc" value="./${shot}/konyplugins.xml"/>
+				<property name="pluginsdir" value="${vis.home}/Kony_Visualizer_Enterprise/dropins"/>
+				<property name="snapshot" value="${shot}"/>
+			</then>
+
+			<!--If the user hasn't provided a name for the snapshot, then assume it's a snapshot of the plugins that came
+			with the installation and create a snapshot called 'default'-->
+			<else>
+				<echo message="Creating a default snapshot of the plugins in this Vis installation${line.separator}from dir '${vis.home}/Kony_Visualizer_Enterprise/plugins'${line.separator}according to file './konyplugins.xml'${line.separator}"/>
+				<property name="pluginsdoc" value="./konyplugins.xml"/>
+				<property name="pluginsdir" value="${vis.home}/Kony_Visualizer_Enterprise/plugins"/>
+				<property name="snapshot" value="default"/>
+			</else>
+		</if>
+
+		<if>
+			<!--If a snaphot by ${snapshot} name already exists, verify that user wants to overwrite it.-->
+			<and>
+				<available file="${vis.home}/Kony_Visualizer_Enterprise/snapshots/${snapshot}" type="dir" property="snapshot.exists"/>
+				<not>
+					<istrue value="${force}"/>
+				</not>
+			</and>
+			<then>
+				<echo message="WARNING: Snapshot '${snapshot}' already exists.${line.separator}add option -Dforce=true to overwrite it${line.separator}OR${line.separator}add option -Dshot=Foo to give the snapshot another name."/>
+			</then>
+
+			<!--If no snapshot by the name ${snapshot} exists, then proceed.-->
+			<else>
+				<!--Get a space separated list of plugins to copy-->
+				<xpath document="${pluginsdoc}" xpath="/plugins/pluginInfo/@plugin-id" outputproperty="plugins"/>
+				
+				<!--Copose a space separated list of the file patterns for all the plugins to copy-->
+				<var name="plugin.patterns" value="" />
+				<for list="${plugins}" delimiter=" " param="plugin" >
+					<sequential>
+						<var name="pattern" value="@{plugin}_*"/>
+						<echo message="    ${pattern}"/>
+						<var name="plugin.patterns" value="${plugin.patterns} ${pattern}" />
+					</sequential>
+				</for>
+
+				<!--Copy the files that match the pattern for any of the plugins-->
+				<copy todir="${vis.home}/Kony_Visualizer_Enterprise/snapshots/${snapshot}" overwrite="true" force="true" verbose="false">
+					<fileset dir="${pluginsdir}" includes="${plugin.patterns}"/>
+				</copy>	
+			</else>
+		</if>			
+	</target>
+
+	<!--List the plugin snapshots created so far-->
+	<target name="snapshots" depends="bootstrap" description="-> List the snapshots of plugin collections created so far.">
+		<dirset id="snapshots" dir="${vis.home}/Kony_Visualizer_Enterprise/snapshots" includes="*"/>
+		<property name="snapshots.list" refid="snapshots"/>
+		<for list="${snapshots.list}" delimiter=";" param="shot" >
+			<sequential>
+				<echo message="@{shot}"/>
+			</sequential>
+		</for>
+	</target>
+
+	<!--Use the Vis plugins from a specific snapshot-->
+	<target name="useshot" depends="bootstrap,clean" description="-> Use the Vis plugins from a specific snapshot.">	
+		<if>
+			<isset property="shot"/>
+			<then>
+				<copy todir="${vis.home}/Kony_Visualizer_Enterprise/dropins">
+					<fileset dir="${vis.home}/Kony_Visualizer_Enterprise/snapshots/${shot}"/>
+				</copy>
+			</then>
+			<else>
+				<echo message="Wait, Viskit needs to know which snaphot to use.${line.separator}Use option -Dshot=Foo."/>
+			</else>
+		</if>	
+	</target>
+
+	<!--Delete a snapshot of Vis plugins-->
+	<target name="delshot" depends="bootstrap" description="-> Delete a snapshot of Vis plugins.">	
+		<if>
+			<isset property="shot"/>
+			<then>
+				<delete dir="${vis.home}/Kony_Visualizer_Enterprise/snapshots/${shot}"/>
+			</then>
+			<else>
+				<echo message="Wait, Viskit needs to know which snaphot to delete.${line.separator}Use option -Dshot=Foo."/>
+			</else>
+		</if>
+	</target>
+
+	<target name="setvisver" depends="home,bootstrap,checkwspc,checkproj,osplugins,genivy,visver,clean,resolve,dedup,jdkcheck,gradlecheck" description="-> Transform this Vis installation to the version of a specific project.">
+
+		<echo message="Done."/>
+		<echo message="Your Vis installation is now version ${vis.version}."/>
+		<echo message="${warning.list}"/>
+	</target>
+
+</project>

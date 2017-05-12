@@ -1,0 +1,16 @@
+<ivysettings>
+	<resolvers>
+		<chain name="plugins-resolver-chain" returnFirst="true">
+			<filesystem name="local">
+				<artifact pattern="${ivy.settings.dir}/lib/[artifact]-[revision].[ext]"/>
+			</filesystem>
+			<!--url name="S3">
+				<artifact pattern="s3://kony-ci0001-storage1/.k/[artifact]_[revision].[ext]" />
+			</url-->
+			<url name="WWW">
+				<artifact pattern="http://download.kony.com/studio/70/plugins/[artifact]_[revision].[ext]" />
+			</url>
+		</chain>
+	</resolvers>
+	<settings defaultResolver="plugins-resolver-chain"/>
+</ivysettings>
