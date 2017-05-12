@@ -66,3 +66,5 @@ If your original installation is lower than 7.2.1 and you want switch to a versi
 Viskit is powered by Apache projects [Ant](http://ant.apache.org/) and [Ivy](http://ant.apache.org/ivy/), and by [Ant Contrib](http://ant-contrib.sourceforge.net/) and [Ant Xpath](https://code.google.com/archive/p/ant-xpath-task/wikis/Introduction.wiki).
 
 Icon made by [Freepik](http://www.flaticon.com/authors/freepik) from www.flaticon.com.
+
+A special 'thanks' goes to [@Subreptivus](https://github.com/Subreptivus) for teaching me how to use Ivy.
