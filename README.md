@@ -1,3 +1,6 @@
+<img src="https://raw.githubusercontent.com/mig82/viskit/master/viskit.png"
+         align="right" alt="Viskit icon" />
+         
 # Viskit
 
 Viskit is a toolkit for Kony Visualiser.
@@ -56,3 +59,4 @@ I'm really sorry about this, but the way this works is that **you have to execut
 
 Viskit is powered by Apache projects [Ant](http://ant.apache.org/) and [Ivy](http://ant.apache.org/ivy/), and by [Ant Contrib](http://ant-contrib.sourceforge.net/) and [Ant Xpath](https://code.google.com/archive/p/ant-xpath-task/wikis/Introduction.wiki).
 
+Icon made by [Freepik](http://www.flaticon.com/authors/freepik) from www.flaticon.com.
