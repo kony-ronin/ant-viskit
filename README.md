@@ -54,5 +54,5 @@ I'm really sorry about this, but the way this works is that **you have to execut
 
 ## Credits
 
-Viskit is powered by Apache projects Ant, Ivy and XpathTask.
+Viskit is powered by Apache projects [Ant](http://ant.apache.org/) and [Ivy](http://ant.apache.org/ivy/), and by [Ant Contrib](http://ant-contrib.sourceforge.net/) and [Ant Xpath](https://code.google.com/archive/p/ant-xpath-task/wikis/Introduction.wiki).
 
