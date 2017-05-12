@@ -30,6 +30,16 @@ To create a snapshot of the plugins used for your current project, from your Vis
 
     ant -f ./viskit/viskit.xml snapshot -Dshot=Foo
 
+Note: the name of the snaphot **must** match the name of an existing project.
+
+To list the already created snapshots, from your Vis workspace run:
+
+    ant -f ./viskit/viskit.xml snapshots
+
+To switch to the plugins from a specific snapshot, say one called 'Foo', from your Vis workspace run:
+
+    ant -f ./viskit/viskit.xml useshot -Dshot=Foo
+
 For help on how to use Viskit, from your Visualiser workspace run:
 
     ant -f ./viskit/viskit.xml help 
@@ -37,6 +47,10 @@ For help on how to use Viskit, from your Visualiser workspace run:
 As always with Ant, to see the full list of options, from your Vis workspace run:
 
     ant -f ./viskit/viskit.xml -p
+
+## Implementation Notes
+
+I'm really sorry about this, but the way this works is that **you have to execute Viskit from your Vis workspace**. You'll get odd behaviour if you don't. I'm working on it. 
 
 ## Credits
 

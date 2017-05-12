@@ -14,7 +14,7 @@
 	<!--Define the Ant Contrib tasks from the jar in this Viskit directory-->
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
-			<pathelement location="./ant-contrib-0.6.jar"/>
+			<pathelement location="./lib/ant-contrib/lib/ant-contrib-0.6.jar"/>
 		</classpath>
 	</taskdef>
 
@@ -75,46 +75,8 @@
 			ant -f ./viskit/viskit.xml -p
 
 	Note: Viskit works well for projects created with Vis 7.1 and above. Project from Vis 7.0 have a broken konyplugins.xml file.
-	
+
 		</echo>
-	</target>
-
-	<target name="install" description="-> Install Viskit in this Vis workspace.">
-		<echo message="Installing Viskit.${line.separator}"/>
-		<echo message="To-do"/>
-		<!--get src="http://foo.bar/qux.jar" dest="./viskit/downloads"/-->
-
-		<mkdir dir="./downloads"/>
-		<mkdir dir="./lib"/>
-
-		<get verbose="true"
-			 dest="./downloads/ivy.zip"
-			 src="http://ftp.cixug.es/apache//ant/ivy/2.4.0/apache-ivy-2.4.0-bin.zip"
-		/>
-		<unzip src="./downloads/ivy.zip" dest="./lib">
-			<patternset>
-				<include name="*/ivy*.jar"/>
-			</patternset>
-		</unzip>
-
-		<get verbose="true"
-			 dest="./downloads/xpathtask.zip"
-			 src="https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/ant-xpath-task/xpathtask-0.1.zip"
-		/>
-		<unzip src="./downloads/xpathtask.zip" dest="./lib">
-			<patternset>
-				<include name="*/*.jar"/>
-			</patternset>
-		</unzip>
-
-		<delete dir="./downloads"/>
-		
-		<!--get src="https://freefr.dl.sourceforge.net/project/ant-contrib/ant-contrib/ant-contrib-0.6/ant-contrib-0.6-bin.zip" dest="./viskit/downloads"/>
-
-		
-		
-		<From Maven repos-->
-		<!--get src="http://repo1.maven.org/maven2/[organisation]/[module]/[revision]/[artifact](-[revision]).[ext]" dest="./viskit"/-->
 	</target>
 
 	<target name="bootstrap">
@@ -367,6 +329,7 @@
 
 	<!--Create a snapshot of the plugins that came with this Vis version needed for a specific project-->
 	<target name="snapshot" depends="bootstrap" description="-> Create a snapshot of the currently used plugins collection">
+		<echo message="Creating a snapshot"/>
 		<if>
 			<!--Check whether the user has provided a name for the snapshot-->
 			<isset property="shot"/>

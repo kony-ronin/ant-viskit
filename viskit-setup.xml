@@ -58,9 +58,14 @@
 	<target name="antcontrib">
 		<echo message="Installing Ant Contrib.${line.separator}"/>
 		<get verbose="true"
-			 dest="./lib/ant-contrib.jar"
-			 src="http://central.maven.org/maven2/ant-contrib/ant-contrib/1.0b3/ant-contrib-1.0b3.jar"
+			 dest="./downloads/ant-contrib.zip"
+			 src="https://freefr.dl.sourceforge.net/project/ant-contrib/ant-contrib/ant-contrib-0.6/ant-contrib-0.6-bin.zip"
 		/>
+		<unzip src="./downloads/ant-contrib.zip" dest="./lib/ant-contrib">
+			<patternset>
+				<include name="**/*.jar"/>
+			</patternset>
+		</unzip>
 	</target>
 
 	<target name="wrapup">
