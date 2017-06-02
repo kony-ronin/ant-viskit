@@ -59,7 +59,7 @@
 		<echo message="Installing Ant Contrib.${line.separator}"/>
 		<get verbose="true"
 			 dest="./downloads/ant-contrib.zip"
-			 src="https://freefr.dl.sourceforge.net/project/ant-contrib/ant-contrib/ant-contrib-0.6/ant-contrib-0.6-bin.zip"
+			 src="https://github.com/mig82/ant-contrib/releases/download/v0.6/ant-contrib-0.6-bin.zip"
 		/>
 		<unzip src="./downloads/ant-contrib.zip" dest="./lib/ant-contrib">
 			<patternset>
