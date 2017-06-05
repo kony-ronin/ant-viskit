@@ -50,7 +50,7 @@
 	Setup:
 
 		1. Set the VIS_HOME environment variable to the dir of your current Visualiser installation. 
-		2. Configure Ant. If you've installed Vis you already have Ant installed within it. Just set the ANT_HOME environment variable to point to it.
+		2. Configure Ant. If you've installed Vis you already have Ant installed within it. Just set the ANT_HOME env var to it.
 		3. Place the Viskit bundle in your Vis workspace.
 		4. Open a command line and cd into your workspace.
 		5. From your Visualiser workspace, run the Viskit set-up.
@@ -59,8 +59,10 @@
 
 	Transform your Vis version to match a project:
 
-		The main thing Viskit was made for is to allow you to use a single Vis installation for any project regardless of it's version. So you're no longer forced to upgrade your projects or keep multiple Vis installations.
-		To do this, run the Viskit 'setvisver' command and give it the name of the Visualiser project you wish to adapt your Vis installation to. From your Vis workspace run:
+		The main thing Viskit was made for is to allow you to use a single Vis installation for any project regardless of
+		it's version. So you're no longer forced to upgrade your projects or keep multiple Vis installations.
+		To do this, run the Viskit 'setvisver' command and give it the name of the Visualiser project you wish to adapt your Vis
+		installation to. From your Vis workspace run:
 
 			ant -f ./viskit/viskit.xml setvisver -Dproject=Foo
 
@@ -200,7 +202,7 @@
 		<ivy:retrieve pattern="${vis.home}/Kony_Visualizer_Enterprise/dropins/[artifact]_[revision].[ext]"/>
 	</target>
 
-	<!--Detete from the plugins dir any file that is already present in the dropins dir-->
+	<!--Delete from the plugins dir any file that is already present in the dropins dir-->
 	<target name="dedup" depends="bootstrap" description="-> Remove other versions of dropin plugins in $VIS_HOME/plugins directory.">
 		<echo message="Deleting existing plugins of other versions from plugins dir:${line.separator}"/>
 
@@ -341,7 +343,7 @@
 			</then>
 
 			<!--If the user hasn't provided a name for the snapshot, then assume it's a snapshot of the plugins that came
-			with the installation and create a snapshot called 'default'-->
+			with the installation and create a snapshot called 'default'. The Vis workspace typically has a konyplugins.xml file that lists the plugins that came with the installer-->
 			<else>
 				<echo message="Creating a default snapshot of the plugins in this Vis installation${line.separator}from dir '${vis.home}/Kony_Visualizer_Enterprise/plugins'${line.separator}according to file './konyplugins.xml'${line.separator}"/>
 				<property name="pluginsdoc" value="./konyplugins.xml"/>
@@ -364,23 +366,34 @@
 
 			<!--If no snapshot by the name ${snapshot} exists, then proceed.-->
 			<else>
-				<!--Get a space separated list of plugins to copy-->
-				<xpath document="${pluginsdoc}" xpath="/plugins/pluginInfo/@plugin-id" outputproperty="plugins"/>
-				
-				<!--Copose a space separated list of the file patterns for all the plugins to copy-->
-				<var name="plugin.patterns" value="" />
-				<for list="${plugins}" delimiter=" " param="plugin" >
-					<sequential>
-						<var name="pattern" value="@{plugin}_*"/>
-						<echo message="    ${pattern}"/>
-						<var name="plugin.patterns" value="${plugin.patterns} ${pattern}" />
-					</sequential>
-				</for>
 
-				<!--Copy the files that match the pattern for any of the plugins-->
-				<copy todir="${vis.home}/Kony_Visualizer_Enterprise/snapshots/${snapshot}" overwrite="true" force="true" verbose="false">
-					<fileset dir="${pluginsdir}" includes="${plugin.patterns}"/>
-				</copy>	
+				<if>
+					<!--Let's check whether the konyplugins.xml file exists before we try to parse it.-->
+					<available file="${pluginsdoc}" type="file" property="pluginsdoc.exists"/>
+					<then>
+						<!--Get a space separated list of plugins to copy-->
+						<xpath document="${pluginsdoc}" xpath="/plugins/pluginInfo/@plugin-id" outputproperty="plugins"/>
+						
+						<!--Compose a space separated list of the file patterns for all the plugins to copy-->
+						<var name="plugin.patterns" value="" />
+						<for list="${plugins}" delimiter=" " param="plugin" >
+							<sequential>
+								<var name="pattern" value="@{plugin}_*"/>
+								<echo message="    ${pattern}"/>
+								<var name="plugin.patterns" value="${plugin.patterns} ${pattern}" />
+							</sequential>
+						</for>
+
+						<!--Copy the files that match the pattern for any of the plugins-->
+						<copy todir="${vis.home}/Kony_Visualizer_Enterprise/snapshots/${snapshot}" overwrite="true" force="true" verbose="false">
+							<fileset dir="${pluginsdir}" includes="${plugin.patterns}"/>
+						</copy>
+						<!--The snapshot is now created.-->
+					</then>
+					<else>
+						<echo message="WARNING: There's no file '${pluginsdoc}'. The snapshot could not be created."/>
+					</else>
+				</if>
 			</else>
 		</if>			
 	</target>
