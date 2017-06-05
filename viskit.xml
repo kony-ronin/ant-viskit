@@ -185,7 +185,12 @@
 			 casesensitive="false"
 			 defaultValue=""/>
 
+		<!--Echo the required Vis version into the stdout and store it in a file for other processes to read it.-->
 		<echo message="Project '${project}' requires keditor version '${keditor.version}', which means Vis version '${vis.version}'" />
+		<propertyfile file="../${project}/viskit.properties">
+			<entry key="vis" value="${vis.version}"/>
+		</propertyfile>
+
 	</target>
 
 	<!--Clean the dropins directory-->
@@ -252,6 +257,7 @@
 		<echo message="Checking for the right version of the Java Development Kit.${line.separator}"/>
 		<echo message="JAVA_HOME is set to '${env.JAVA_HOME}'"/>
 		
+		<!--Determine the machine readable JDK version from the Ant native java.version property-->
 		<propertyregex property="jdk.version"
 		 input="${java.version}"
 		 regexp="(\d+\.\d+\.\d+)\w*"
@@ -260,8 +266,10 @@
 		 override="true"
 		 defaultValue=""
 		/>
+		
+		<!--Echo the current JDK version into the stdout-->
 		<echo message="Your JDK version is '${jdk.version}'"/>
-
+		
 		<if>
 			<bool><islessthan arg1="${vis.version}" arg2="7.2.1"/></bool>
 			<then>
@@ -271,7 +279,12 @@
 				<property name="jdk.required" value="1.8.0"/>
 			</else>
 		</if>
+		
+		<!--Echo the required JDK version into the stdout and store it in a file for other processes to read it.-->
 		<echo message="Project '${project}' requires Vis version '${vis.version}', which requires Java JDK ${jdk.required}" />
+		<propertyfile file="../${project}/viskit.properties">
+			<entry key="jdk" value="${jdk.required}"/>
+		</propertyfile>
 		
 		<if>
 			<equals arg1="${jdk.version}" arg2="${jdk.required}"/>
@@ -298,7 +311,13 @@
 				<property name="gradle.required" value="2.14.1"/>
 			</else>
 		</if>
+		
+		<!--Echo the required Gradle version into the stdout and store it in a file for other processes to read it.-->
 		<echo message="Project '${project}' requires Vis version '${vis.version}', which requires Gradle ${gradle.required}" />
+		<propertyfile file="../${project}/viskit.properties">
+			<entry key="gradle" value="${gradle.required}"/>
+		</propertyfile>
+
 
 		<exec executable="${vis.home}/gradle/bin/gradle" outputproperty="gradle.version.long">
 			<arg line="-version"/>
