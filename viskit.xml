@@ -333,10 +333,28 @@
 		<propertyfile file="../${project}/viskit.properties">
 			<entry key="gradle" value="${gradle.required}"/>
 		</propertyfile>
+		
+		<!--Let's determine whether the Gradle executable is a gradle shell script or a bat script-->
+		<if>
+			<or>
+				<os family="mac"/>
+				<os family="unix"/>
+			</or>
+			<then>
+				<echo message="Gradle executable for Mac/Linux is simply 'gradle'."/>
+				<property name="gradle.executable" value="gradle"/>
+			</then>
+			<elseif>
+				<os family="windows"/>
+				<then>
+					<echo message="Gradle executable for Windows is 'gradle.bat'."/>
+					<property name="gradle.executable" value="gradle.bat"/>
+				</then>
+			</elseif>
+		</if>
 
-
-		<exec executable="${vis.home}/gradle/bin/gradle" outputproperty="gradle.version.long">
-			<arg line="-version"/>
+		<exec executable="${vis.home}/gradle/bin/${gradle.executable}" outputproperty="gradle.version.long">
+			<arg line="--version"/>
 		</exec>
 		<echo message="${gradle.version.long}"/>
 
