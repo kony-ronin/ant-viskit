@@ -270,13 +270,28 @@
 		<!--Echo the current JDK version into the stdout-->
 		<echo message="Your JDK version is '${jdk.version}'"/>
 		
+		<!--Vis versions 7.2.0 and below require JDK 1.7.0 u79 and versions 7.2.1 and above use JDK 1.8.0 u112-->
 		<if>
-			<bool><islessthan arg1="${vis.version}" arg2="7.2.1"/></bool>
+			<or>
+				<equals arg1="${vis.version}" arg2="7.0.0"/>
+				<equals arg1="${vis.version}" arg2="7.1.0"/>
+				<equals arg1="${vis.version}" arg2="7.1.1"/>
+				<equals arg1="${vis.version}" arg2="7.2.0"/>
+			</or>
 			<then>
-				<property name="jdk.required" value="1.7.0"/>
+				<property name="jdk.required" value="7u79"/>
 			</then>
+			<elseif>
+				<or>
+					<equals arg1="${vis.version}" arg2="7.2.1"/>
+					<equals arg1="${vis.version}" arg2="7.3.0"/>
+				</or>
+				<then>
+					<property name="jdk.required" value="8u112"/>
+				</then>
+			</elseif>
 			<else>
-				<property name="jdk.required" value="1.8.0"/>
+				<echo message="WARNING: Your Vis version is so new we don't know which JDK it needs. We guess it will require JDK ${jdk.required}"/>
 			</else>
 		</if>
 		
