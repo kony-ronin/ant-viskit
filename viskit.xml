@@ -303,14 +303,28 @@
 	<target name="gradlecheck" depends="bootstrap,visver,jdkcheck" description="-> Swith to the version of Gradle needed for a specific Vis project">
 		<echo message="Switching to the right version of Gradle."/>
 		
-		<!--Vis 7.2.1 requires Gradle 2.14.1 but all other versions below than and 7.3 use Gradle 2.13-->
+		<!--Vis 7.2.0 and below require Gradle 2.4 and versions 7.2.1 and above use Gradle 2.14.1-->
 		<if>
-			<equals arg1="${vis.version}" arg2="7.2.1"/>
+			<or>
+				<equals arg1="${vis.version}" arg2="7.0.0"/>
+				<equals arg1="${vis.version}" arg2="7.1.0"/>
+				<equals arg1="${vis.version}" arg2="7.1.1"/>
+				<equals arg1="${vis.version}" arg2="7.2.0"/>
+			</or>
 			<then>
-				<property name="gradle.required" value="2.14.1"/>
+				<property name="gradle.required" value="2.4"/>
 			</then>
+			<elseif>
+				<or>
+					<equals arg1="${vis.version}" arg2="7.2.1"/>
+					<equals arg1="${vis.version}" arg2="7.3.0"/>
+				</or>
+				<then>
+					<property name="gradle.required" value="2.14.1"/>
+				</then>
+			</elseif>
 			<else>
-				<property name="gradle.required" value="2.13"/>
+				<echo message="WARNING: Your Vis version is so new we don't know which Gradle it needs"/>
 			</else>
 		</if>
 		
